@@ -106,9 +106,18 @@
     .hint { margin-top: 8px; color: var(--muted); font-size: 12px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .dashboard { display: grid; gap: 18px; }
-    .results-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .results-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
     .result-card {
-      align-items: flex-start; padding: 18px; box-shadow: 0 10px 22px rgba(31,36,48,.05); min-height: 122px; display: flex; flex-direction: column; justify-content: space-between; }
+      align-items: flex-start;
+      padding: 18px;
+      box-shadow: 0 10px 22px rgba(31,36,48,.05);
+      min-height: 122px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+      overflow: hidden;
+    }
     .result-card.main { background: linear-gradient(135deg, var(--primary), #ff934f); color: white; border: 0; }
     .result-card.blue { background: var(--soft-blue); }
     .result-card.orange { background: var(--soft); }
@@ -179,7 +188,16 @@
     }
     .result-card span { color: var(--muted); font-size: 13px; }
     .result-card.main span { color: rgba(255,255,255,.82); }
-    .result-card strong { display: block; font-size: 24px; letter-spacing: -.6px; white-space: nowrap; }
+    .result-card strong {
+      display: block;
+      width: 100%;
+      font-size: clamp(20px, 1.9vw, 24px);
+      line-height: 1.15;
+      letter-spacing: -.6px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
     .result-card small { color: var(--muted); font-size: 12px; margin-top: 4px; }
     .result-card.main small { color: rgba(255,255,255,.78); }
     .content-panel { box-shadow: var(--shadow); padding: 24px; background: rgba(255,255,255,.92); }
@@ -349,7 +367,7 @@
 
           <div id="tab-food" class="tab-content">
             <h2 class="section-title">Питание</h2>
-            <p class="section-subtitle">Москва — 300 ₽ gross за рабочий день, регионы — 240 ₽. НДФЛ по питанию — 13%.</p>
+            <p class="section-subtitle">Москва — 300 ₽ gross за рабочий день, регионы — 240 ₽ gross. НДФЛ по питанию — 13%.</p>
             <div class="table-wrap"><table><thead><tr><th>Месяц</th><th>Рабочие дни</th><th>Доплата за день</th><th>Питание gross</th><th>НДФЛ</th><th>Питание net</th></tr></thead><tbody id="foodRows"></tbody><tfoot><tr><td>Итого</td><td id="foodDaysSum">—</td><td>—</td><td id="foodGrossSum">—</td><td id="foodTaxSum">—</td><td id="foodNetSum">—</td></tr></tfoot></table></div>
           </div>
 
@@ -361,7 +379,7 @@
 
           <div id="tab-logic" class="tab-content">
             <h2 class="section-title">Логика расчета</h2>
-            <p class="section-subtitle">Кратко о логике расчета.</p>
+            <p class="section-subtitle">Кратко о том, как веб-калькулятор повторяет Excel.</p>
             <div class="info-grid">
               <article class="info-card"><h3>Коэффициенты</h3><p>По выбранному городу из справочника подтягиваются РК, СН, итоговая надбавка, тип территории, доп. отпуск и локальные праздники.</p><div class="formula">Сумма с коэффициентами = сумма × (1 + РК + СН)</div></article>
               <article class="info-card"><h3>Gross – Net</h3><p>Gross за месяц проходит через накопительную шкалу НДФЛ. Net считается как gross минус налог за месяц.</p><div class="formula">Net = Gross − НДФЛ за месяц</div></article>
@@ -592,7 +610,7 @@
       $("totalNetMonthly").textContent = money(netMonthly + food.avgNet);
       $("vacation").textContent = String(c.vacation);
       $("territory").textContent = `тип: ${c.type}; праздники: ${c.holidays}`;
-      els.foodDayHint.textContent = `${els.foodCity.value}: ${money(food.day)} за рабочий день`;
+      els.foodDayHint.textContent = `${els.foodCity.value}: ${money(food.day)} gross за рабочий день`;
       renderSalaryTable(rows);
       renderFood(food);
       renderBonus(grossAnnual, {days, base: bonusBase, gross: bonusGross, tax: bonusTax, net: bonusNet, bonusRate, ifRate, tfRate});
