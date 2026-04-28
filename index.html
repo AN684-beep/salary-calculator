@@ -1,82 +1,582 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Калькулятор зарплаты</title>
   <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2430;
+      --muted: #6f7787;
+      --line: #e3e7ef;
+      --primary: #ff6a13;
+      --primary-dark: #df5709;
+      --soft: #fff3eb;
+      --green: #0f8a5f;
+      --red: #c63737;
+      --shadow: 0 18px 45px rgba(31, 36, 48, 0.10);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial;
-      background: #f5f6fa;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top left, #fff0e6 0, transparent 34%), var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 28px;
+      align-items: stretch;
+      margin-top: 12px;
+    }
+
+    .hero-card,
+    .calculator-card,
+    .info-card,
+    .result-card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(227, 231, 239, 0.9);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+    }
+
+    .hero-card {
+      padding: 42px;
+      min-height: 440px;
       display: flex;
-      justify-content: center;
-      padding: 40px;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
     }
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      width: 360px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: rgba(255, 106, 19, 0.10);
+      right: -86px;
+      bottom: -92px;
     }
-    h2 { margin-bottom: 20px; }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+
+    .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--primary-dark);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 22px;
     }
-    .result {
+
+    h1 {
+      font-size: clamp(34px, 4vw, 56px);
+      line-height: 1.02;
+      margin: 0 0 20px;
+      letter-spacing: -1.8px;
+    }
+
+    .lead {
+      max-width: 650px;
+      color: var(--muted);
       font-size: 18px;
-      font-weight: bold;
-      margin-top: 10px;
+      margin: 0;
+    }
+
+    .hero-points {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 34px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .point {
+      padding: 16px;
+      border-radius: 18px;
+      background: #fafbfe;
+      border: 1px solid var(--line);
+    }
+
+    .point strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 3px;
+    }
+
+    .point span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .calculator-card {
+      padding: 28px;
+    }
+
+    .section-title {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: -0.4px;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      margin: 0 0 22px;
+      font-size: 14px;
+    }
+
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 18px;
+      background: #f0f3f8;
+      margin-bottom: 22px;
+    }
+
+    .mode-switch button {
+      border: 0;
+      background: transparent;
+      border-radius: 14px;
+      padding: 12px 10px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .mode-switch button.active {
+      background: #ffffff;
+      color: var(--text);
+      box-shadow: 0 8px 18px rgba(31, 36, 48, 0.08);
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    label small {
+      color: var(--muted);
+      font-weight: 400;
+      text-align: right;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 15px 16px;
+      font-size: 16px;
+      outline: none;
+      transition: 0.2s;
+      background: #ffffff;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(255, 106, 19, 0.12);
+    }
+
+    .hint {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .results {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .result-card {
+      box-shadow: none;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .result-card.main {
+      background: linear-gradient(135deg, var(--primary), #ff934f);
+      color: white;
+      border: 0;
+      padding: 22px;
+    }
+
+    .result-card span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .result-card.main span {
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .result-card strong {
+      display: block;
+      font-size: 24px;
+      white-space: nowrap;
+    }
+
+    .result-card.main strong {
+      font-size: 32px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    .info-card {
+      padding: 24px;
+      box-shadow: none;
+    }
+
+    .info-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .info-card p,
+    .info-card li {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .info-card p {
+      margin: 0;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .formula {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #4c5566;
+      font-size: 13px;
+      border: 1px solid var(--line);
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        min-height: auto;
+        padding: 30px;
+      }
+
+      .hero-points {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .page {
+        width: min(100% - 20px, 1180px);
+        padding-top: 16px;
+      }
+
+      .hero-card,
+      .calculator-card,
+      .info-card {
+        border-radius: 20px;
+      }
+
+      .result-card,
+      .result-card.main {
+        display: block;
+      }
+
+      .result-card strong,
+      .result-card.main strong {
+        margin-top: 6px;
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 <body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-card">
+        <div>
+          <div class="eyebrow">HR-инструмент для расчета оффера</div>
+          <h1>Калькулятор зарплаты Gross / Net</h1>
+          <p class="lead">
+            Удобный расчет зарплатного предложения: можно вводить сумму в gross или net,
+            отдельно учитывать питание и видеть прозрачную разбивку результата.
+          </p>
+        </div>
 
-<div class="card">
-  <h2>Калькулятор ЗП</h2>
+        <div class="hero-points">
+          <div class="point">
+            <strong>2</strong>
+            <span>режима расчета: gross → net и net → gross</span>
+          </div>
+          <div class="point">
+            <strong>13/15%</strong>
+            <span>автоматический учет ставки НДФЛ</span>
+          </div>
+          <div class="point">
+            <strong>12 мес.</strong>
+            <span>годовая оценка без смешивания с бонусом</span>
+          </div>
+        </div>
+      </div>
 
-  <label>Режим</label>
-  <select id="mode">
-    <option value="gross">Gross → Net</option>
-    <option value="net">Net → Gross</option>
-  </select>
+      <section class="calculator-card" aria-label="Калькулятор зарплаты">
+        <h2 class="section-title">Расчет</h2>
+        <p class="section-subtitle">Заполни поля — результат пересчитается автоматически.</p>
 
-  <label>Зарплата</label>
-  <input type="number" id="salary" placeholder="Введите сумму">
+        <div class="mode-switch" role="tablist" aria-label="Режим расчета">
+          <button class="active" type="button" data-mode="gross">Gross → Net</button>
+          <button type="button" data-mode="net">Net → Gross</button>
+        </div>
 
-  <label>Питание (в мес)</label>
-  <input type="number" id="food" value="0">
+        <div class="field">
+          <label for="salary">
+            <span id="salaryLabel">Gross зарплата в месяц</span>
+            <small>без питания и бонуса</small>
+          </label>
+          <input id="salary" type="number" min="0" step="1000" placeholder="Например, 250000" />
+        </div>
 
-  <div class="result" id="result">Результат: —</div>
-</div>
+        <div class="field">
+          <label for="food">
+            <span>Питание в месяц</span>
+            <small>отдельная выплата</small>
+          </label>
+          <input id="food" type="number" min="0" step="500" value="0" />
+          <div class="hint">Питание не участвует в расчете НДФЛ, а показывается отдельной строкой.</div>
+        </div>
 
-<script>
-function calculate() {
-  let mode = document.getElementById("mode").value;
-  let salary = Number(document.getElementById("salary").value);
-  let food = Number(document.getElementById("food").value);
+        <div class="field">
+          <label for="bonus">
+            <span>Годовой бонус</span>
+            <small>не входит в месячный доход</small>
+          </label>
+          <input id="bonus" type="number" min="0" step="10000" value="0" />
+          <div class="hint">Бонус отображается отдельно как годовая сумма.</div>
+        </div>
 
-  let tax = salary > 5000000 ? 0.15 : 0.13;
+        <div class="results">
+          <div class="result-card main">
+            <div>
+              <span id="mainResultCaption">Net зарплата в месяц</span>
+              <strong id="mainResult">—</strong>
+            </div>
+          </div>
 
-  let result;
+          <div class="result-card">
+            <div>
+              <span>Питание в месяц</span>
+              <strong id="foodResult">0 ₽</strong>
+            </div>
+          </div>
 
-  if (mode === "gross") {
-    result = salary * (1 - tax) + food;
-  } else {
-    result = salary / (1 - tax) + food;
-  }
+          <div class="result-card">
+            <div>
+              <span>Net зарплата + питание в месяц</span>
+              <strong id="monthlyTotal">—</strong>
+            </div>
+          </div>
 
-  document.getElementById("result").innerText =
-    "Результат: " + Math.round(result).toLocaleString() + " ₽";
-}
+          <div class="result-card">
+            <div>
+              <span>Годовой бонус отдельно</span>
+              <strong id="bonusResult">0 ₽</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
 
-document.querySelectorAll("input, select").forEach(el => {
-  el.addEventListener("input", calculate);
-});
-</script>
+    <section class="grid">
+      <article class="info-card">
+        <h3>Что считает калькулятор</h3>
+        <p>
+          Инструмент помогает быстро сравнить зарплатное предложение в формате gross или net
+          и увидеть итоговые суммы без ручного пересчета в Excel.
+        </p>
+      </article>
 
+      <article class="info-card">
+        <h3>Как работает режим Gross → Net</h3>
+        <ul>
+          <li>вводится gross зарплата;</li>
+          <li>рассчитывается НДФЛ;</li>
+          <li>выводится чистая net зарплата;</li>
+          <li>питание показывается отдельно и в сумме с net.</li>
+        </ul>
+        <div class="formula">Net = Gross − НДФЛ</div>
+      </article>
+
+      <article class="info-card">
+        <h3>Как работает режим Net → Gross</h3>
+        <ul>
+          <li>вводится желаемая net зарплата;</li>
+          <li>калькулятор определяет нужный gross;</li>
+          <li>отдельно показывает питание и бонус;</li>
+          <li>бонус не смешивается с месячным доходом.</li>
+        </ul>
+        <div class="formula">Gross = Net / (1 − ставка НДФЛ)</div>
+      </article>
+    </section>
+
+    <p class="footer-note">
+      Расчет является предварительным и предназначен для внутренней оценки оффера.
+    </p>
+  </main>
+
+  <script>
+    const TAX_LIMIT_PER_YEAR = 5000000;
+    const BASE_TAX = 0.13;
+    const HIGH_TAX = 0.15;
+
+    let currentMode = "gross";
+
+    const modeButtons = document.querySelectorAll(".mode-switch button");
+    const salaryInput = document.getElementById("salary");
+    const foodInput = document.getElementById("food");
+    const bonusInput = document.getElementById("bonus");
+    const salaryLabel = document.getElementById("salaryLabel");
+    const mainResultCaption = document.getElementById("mainResultCaption");
+    const mainResult = document.getElementById("mainResult");
+    const foodResult = document.getElementById("foodResult");
+    const monthlyTotal = document.getElementById("monthlyTotal");
+    const bonusResult = document.getElementById("bonusResult");
+
+    function money(value) {
+      if (!Number.isFinite(value) || value <= 0) return "—";
+      return Math.round(value).toLocaleString("ru-RU") + " ₽";
+    }
+
+    function moneyZero(value) {
+      if (!Number.isFinite(value) || value <= 0) return "0 ₽";
+      return Math.round(value).toLocaleString("ru-RU") + " ₽";
+    }
+
+    function getTaxRateByAnnualGross(annualGross) {
+      return annualGross > TAX_LIMIT_PER_YEAR ? HIGH_TAX : BASE_TAX;
+    }
+
+    function calculateGrossToNet(grossMonthly) {
+      const annualGross = grossMonthly * 12;
+      const taxRate = getTaxRateByAnnualGross(annualGross);
+      return grossMonthly * (1 - taxRate);
+    }
+
+    function calculateNetToGross(netMonthly) {
+      const estimatedAnnualGrossByBaseTax = (netMonthly / (1 - BASE_TAX)) * 12;
+      const taxRate = getTaxRateByAnnualGross(estimatedAnnualGrossByBaseTax);
+      return netMonthly / (1 - taxRate);
+    }
+
+    function calculate() {
+      const salary = Number(salaryInput.value);
+      const food = Number(foodInput.value);
+      const bonus = Number(bonusInput.value);
+
+      if (!salary || salary <= 0) {
+        mainResult.textContent = "—";
+        foodResult.textContent = moneyZero(food);
+        monthlyTotal.textContent = "—";
+        bonusResult.textContent = moneyZero(bonus);
+        return;
+      }
+
+      if (currentMode === "gross") {
+        const netMonthly = calculateGrossToNet(salary);
+        mainResultCaption.textContent = "Net зарплата в месяц";
+        mainResult.textContent = money(netMonthly);
+        monthlyTotal.textContent = money(netMonthly + food);
+      } else {
+        const grossMonthly = calculateNetToGross(salary);
+        mainResultCaption.textContent = "Gross зарплата в месяц";
+        mainResult.textContent = money(grossMonthly);
+        monthlyTotal.textContent = money(salary + food);
+      }
+
+      foodResult.textContent = moneyZero(food);
+      bonusResult.textContent = moneyZero(bonus);
+    }
+
+    modeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        currentMode = button.dataset.mode;
+
+        modeButtons.forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+
+        if (currentMode === "gross") {
+          salaryLabel.textContent = "Gross зарплата в месяц";
+          salaryInput.placeholder = "Например, 250000";
+        } else {
+          salaryLabel.textContent = "Net зарплата в месяц";
+          salaryInput.placeholder = "Например, 217500";
+        }
+
+        calculate();
+      });
+    });
+
+    [salaryInput, foodInput, bonusInput].forEach((input) => {
+      input.addEventListener("input", calculate);
+    });
+
+    calculate();
+  </script>
 </body>
 </html>
