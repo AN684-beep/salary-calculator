@@ -107,7 +107,8 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .dashboard { display: grid; gap: 18px; }
     .results-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .result-card { padding: 18px; box-shadow: 0 10px 22px rgba(31,36,48,.05); min-height: 122px; display: flex; flex-direction: column; justify-content: space-between; }
+    .result-card {
+      align-items: flex-start; padding: 18px; box-shadow: 0 10px 22px rgba(31,36,48,.05); min-height: 122px; display: flex; flex-direction: column; justify-content: space-between; }
     .result-card.main { background: linear-gradient(135deg, var(--primary), #ff934f); color: white; border: 0; }
     .result-card.blue { background: var(--soft-blue); }
     .result-card.orange { background: var(--soft); }
@@ -157,11 +158,17 @@
       margin-bottom: 18px;
     }
     .howto-step {
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 14px;
+      background: #f8fafc;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      padding: 12px;
       color: var(--muted);
+      font-size: 13px;
+    }
+    .howto-step strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 2px;
       font-size: 13px;
     }
     .howto-step strong {
@@ -225,7 +232,7 @@
     <section class="workspace">
       <aside class="panel sticky">
         <h2 class="section-title">Исходные данные</h2>
-        <p class="section-subtitle">Поля повторяют логику вкладки «Дашборд».</p>
+        <p class="section-subtitle"></p>
 
         <div class="mode-switch">
           <button class="active" type="button" data-mode="gross">Gross – Net</button>
@@ -235,7 +242,7 @@
         <div class="field">
           <label for="salary"><span id="salaryLabel">Сумма gross</span><small>в месяц</small></label>
           <input id="salary" type="text" inputmode="numeric" value="100 000" />
-          <div class="hint">Можно вводить без пробелов: 100000 → 100 000.</div>
+          
         </div>
 
         <div class="field">
@@ -268,7 +275,7 @@
         <div class="field">
           <label for="foodCity"><span>Питание</span><small>город</small></label>
           <select id="foodCity"><option selected>Москва</option><option>Регионы</option></select>
-          <div class="hint" id="foodDayHint">Москва gross — 300 ₽/день, регионы gross — 240 ₽/день.</div>
+          <div class="hint" id="foodDayHint">Москва — 300 ₽ gross за рабочий день, регионы — 240 ₽ gross за рабочий день.</div>
         </div>
 
         <div class="field">
@@ -280,7 +287,7 @@
           <div class="field">
             <label for="bonusPct"><span>Бонус</span><small>%</small></label>
             <input id="bonusPct" type="number" min="0" step="1" value="8" />
-            <div class="hint">Вводи проценты обычным числом: 8 = 8%.</div>
+            
           </div>
           <div class="field">
             <label for="ifPct"><span>IF</span><small>%</small></label>
@@ -292,7 +299,7 @@
           <div class="field">
             <label for="tfPct"><span>TF</span><small>%</small></label>
             <input id="tfPct" type="number" min="0" step="1" value="140" />
-            <div class="hint">IF/TF также вводятся как проценты: 120 = 120%.</div>
+            
           </div>
           <div class="field">
             <label for="startMonth"><span>Месяц выхода</span><small>для бонуса</small></label>
@@ -365,7 +372,7 @@
       </section>
     </section>
 
-    <p class="footer-note">Расчет предварительный. НДФЛ с бонуса указан по ставке 13%, без учета годовой прогрессивной шкалы.<br>Разработчик: Алла.</p>
+    <p class="footer-note">Расчет предварительный. НДФЛ с бонуса указан по ставке 13%, без учета годовой прогрессивной шкалы.<br>Разработчик: Алла Никишина.</p>
   </main>
 
   <script>
