@@ -69,7 +69,12 @@
     .mini-card { padding: 18px; box-shadow: 0 10px 22px rgba(31,36,48,.06); }
     .mini-card strong { display: block; font-size: 24px; margin-bottom: 4px; }
     .mini-card span { color: var(--muted); font-size: 13px; }
-    .workspace { display: grid; grid-template-columns: 390px 1fr; gap: 22px; align-items: start; }
+    .workspace {
+      display: grid;
+      grid-template-columns: 390px minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
     .panel { padding: 24px; box-shadow: var(--shadow); }
     .sticky { position: sticky; top: 20px; }
     .section-title { margin: 0 0 6px; font-size: 24px; letter-spacing: -0.4px; }
@@ -105,8 +110,18 @@
     input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(255, 106, 19, 0.12); }
     .hint { margin-top: 8px; color: var(--muted); font-size: 12px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .dashboard { display: grid; gap: 18px; }
-    .results-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .dashboard {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
     .result-card {
       align-items: flex-start;
       padding: 18px;
@@ -200,11 +215,29 @@
     }
     .result-card small { color: var(--muted); font-size: 12px; margin-top: 4px; }
     .result-card.main small { color: rgba(255,255,255,.78); }
-    .content-panel { box-shadow: var(--shadow); padding: 24px; background: rgba(255,255,255,.92); }
+    .content-panel {
+      box-shadow: var(--shadow);
+      padding: 24px;
+      background: rgba(255,255,255,.92);
+      min-width: 0;
+      overflow: hidden;
+    }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 18px; font-size: 14px; }
+    .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      font-size: 14px;
+    }
     th, td { padding: 12px 11px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
     th:first-child, td:first-child { text-align: left; }
     th { color: var(--muted); font-size: 12px; background: #f8fafc; text-transform: uppercase; letter-spacing: .4px; }
