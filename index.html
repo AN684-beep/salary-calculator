@@ -176,7 +176,7 @@
 
         <div class="field">
           <label for="salary"><span id="salaryLabel">Сумма gross</span><small>в месяц</small></label>
-          <input id="salary" type="number" min="0" step="1000" value="100000" />
+          <input id="salary" type="text" inputmode="numeric" value="100 000" />
         </div>
 
         <div class="field">
@@ -352,13 +352,17 @@
     const els = {
       salary: $("salary"), applyCoeff: $("applyCoeff"), macro: $("macro"), city: $("city"), rk: $("rk"), sn: $("sn"), foodCity: $("foodCity"), workDays: $("workDays"), bonusPct: $("bonusPct"), ifPct: $("ifPct"), tfPct: $("tfPct"), startMonth: $("startMonth"), salaryLabel: $("salaryLabel"), cityHint: $("cityHint"), foodDayHint: $("foodDayHint")
     };
-    function formatNumberInput(el) {
-      let v = el.value.replace(/\s+/g,'');
-      if (!v) { el.value=''; return; }
-      v = v.replace(/[^0-9]/g,'');
-      el.value = Number(v).toLocaleString('ru-RU');
+    function formatSalaryInput(el) {
+      const raw = (el.value || '').toString().replace(/\s+/g, '').replace(/[^0-9]/g, '');
+      if (!raw) {
+        el.value = '';
+        return;
+      }
+      el.value = Number(raw).toLocaleString('ru-RU');
     }
-    function n(input) { return Number((input.value||'').toString().replace(/\s+/g,'')) || 0; }
+    function n(input) {
+      return Number((input.value || '').toString().replace(/\s+/g, '')) || 0;
+    }
     function money(value) { return Number.isFinite(value) ? Math.round(value).toLocaleString("ru-RU") + " ₽" : "—"; }
     function pct(value) { return Number.isFinite(value) ? Math.round(value * 100) + "%" : "—"; }
     function taxFromGross(cumGross) {
@@ -531,16 +535,17 @@
       });
     });
     fillInitialSelects();
-    [els.salary, els.workDays, els.bonusPct, els.ifPct, els.tfPct].forEach(el => formatNumberInput(el));
+    formatSalaryInput(els.salary);
     els.macro.addEventListener("change", () => { fillCities(); calculate(); });
     els.city.addEventListener("change", calculate);
-    [els.salary, els.applyCoeff, els.foodCity, els.workDays, els.bonusPct, els.ifPct, els.tfPct, els.startMonth].forEach(el => {
-      if (el.tagName === 'INPUT') {
-        el.addEventListener('input', () => { formatNumberInput(el); calculate(); });
-        el.addEventListener('blur', () => { formatNumberInput(el); });
-      } else {
-        el.addEventListener('input', calculate);
-      }
+    els.salary.addEventListener('input', () => {
+      formatSalaryInput(els.salary);
+      calculate();
+    });
+    els.salary.addEventListener('blur', () => formatSalaryInput(els.salary));
+
+    [els.applyCoeff, els.foodCity, els.workDays, els.bonusPct, els.ifPct, els.tfPct, els.startMonth].forEach(el => {
+      el.addEventListener('input', calculate);
       el.addEventListener('change', calculate);
     });
     calculate();
