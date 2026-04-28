@@ -112,6 +112,64 @@
     .result-card.blue { background: var(--soft-blue); }
     .result-card.orange { background: var(--soft); }
     .result-card.green { background: var(--soft-green); }
+    .result-card.highlight {
+      border: 2px solid rgba(255, 106, 19, 0.35);
+      box-shadow: 0 14px 30px rgba(255, 106, 19, 0.14);
+    }
+    .tab-switch button[data-tab="logic"] {
+      opacity: .62;
+      font-weight: 600;
+    }
+    .tab-switch button[data-tab="logic"].active {
+      opacity: 1;
+    }
+    .tax-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 54px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 12px;
+      background: #eefaf5;
+      color: #0f8a5f;
+    }
+    .tax-badge.warn {
+      background: #fff3eb;
+      color: #df5709;
+    }
+    .tax-badge.danger {
+      background: #fff0f0;
+      color: #c63737;
+    }
+    .default-button {
+      width: 100%;
+      margin-top: 6px;
+      background: var(--soft);
+      color: var(--primary-dark);
+      border: 1px solid rgba(255, 106, 19, 0.22);
+    }
+    .howto {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .howto-step {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .howto-step strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
     .result-card span { color: var(--muted); font-size: 13px; }
     .result-card.main span { color: rgba(255,255,255,.82); }
     .result-card strong { display: block; font-size: 24px; letter-spacing: -.6px; white-space: nowrap; }
@@ -143,7 +201,7 @@
     @media (max-width: 760px) {
       .page { width: min(100% - 20px, 1320px); padding-top: 14px; }
       .hero, .panel, .content-panel { border-radius: 22px; padding: 22px; }
-      .hero-mini, .results-grid, .info-grid, .form-row { grid-template-columns: 1fr; }
+      .hero-mini, .results-grid, .info-grid, .form-row, .howto { grid-template-columns: 1fr; }
       .tab-switch { grid-template-columns: 1fr; }
     }
   </style>
@@ -177,6 +235,7 @@
         <div class="field">
           <label for="salary"><span id="salaryLabel">Сумма gross</span><small>в месяц</small></label>
           <input id="salary" type="text" inputmode="numeric" value="100 000" />
+          <div class="hint">Можно вводить без пробелов: 100000 → 100 000.</div>
         </div>
 
         <div class="field">
@@ -209,7 +268,7 @@
         <div class="field">
           <label for="foodCity"><span>Питание</span><small>город</small></label>
           <select id="foodCity"><option selected>Москва</option><option>Регионы</option></select>
-          <div class="hint" id="foodDayHint">Сумма за день подтянется автоматически.</div>
+          <div class="hint" id="foodDayHint">Москва gross — 300 ₽/день, регионы gross — 240 ₽/день.</div>
         </div>
 
         <div class="field">
@@ -221,6 +280,7 @@
           <div class="field">
             <label for="bonusPct"><span>Бонус</span><small>%</small></label>
             <input id="bonusPct" type="number" min="0" step="1" value="8" />
+            <div class="hint">Вводи проценты обычным числом: 8 = 8%.</div>
           </div>
           <div class="field">
             <label for="ifPct"><span>IF</span><small>%</small></label>
@@ -232,26 +292,36 @@
           <div class="field">
             <label for="tfPct"><span>TF</span><small>%</small></label>
             <input id="tfPct" type="number" min="0" step="1" value="140" />
+            <div class="hint">IF/TF также вводятся как проценты: 120 = 120%.</div>
           </div>
           <div class="field">
             <label for="startMonth"><span>Месяц выхода</span><small>для бонуса</small></label>
             <select id="startMonth"></select>
           </div>
         </div>
+
+        <button class="default-button" type="button" id="resetDefaults">Сбросить к значениям по умолчанию</button>
       </aside>
 
       <section class="dashboard">
+        <div class="howto">
+          <div class="howto-step"><strong>1. Выбери режим</strong>Gross–Net или Net–Gross.</div>
+          <div class="howto-step"><strong>2. Введи сумму</strong>Зарплата форматируется автоматически.</div>
+          <div class="howto-step"><strong>3. Выбери регион</strong>Коэффициенты подтянутся из справочника.</div>
+          <div class="howto-step"><strong>4. Проверь итог</strong>Смотри карточки и разбивку по месяцам.</div>
+        </div>
+
         <div class="results-grid">
-          <div class="result-card main"><span>Net в месяц</span><strong id="netMonthly">—</strong><small>среднее по году</small></div>
+          <div class="result-card main highlight"><span>Net в месяц</span><strong id="netMonthly">—</strong><small>среднее по году</small></div>
           <div class="result-card"><span>Gross в месяц</span><strong id="grossMonthly">—</strong><small>среднее по году</small></div>
           <div class="result-card"><span>Gross в год</span><strong id="grossAnnual">—</strong><small>оклад без питания</small></div>
           <div class="result-card orange"><span>Итоговый коэффициент</span><strong id="totalCoeff">—</strong><small id="coeffText">РК + СН</small></div>
           <div class="result-card blue"><span>Питание gross в месяц</span><strong id="foodGrossMonthly">—</strong><small id="foodGrossHint">по выбранному городу</small></div>
           <div class="result-card blue"><span>Питание net в месяц</span><strong id="foodNetMonthly">—</strong><small>после 13% НДФЛ</small></div>
           <div class="result-card green"><span>Бонус gross</span><strong id="bonusGross">—</strong><small>годовая сумма</small></div>
-          <div class="result-card green"><span>Бонус net</span><strong id="bonusNet">—</strong><small>НДФЛ 13%</small></div>
+          <div class="result-card green highlight"><span>Бонус net</span><strong id="bonusNet">—</strong><small>НДФЛ 13%</small></div>
           <div class="result-card"><span>Общий gross в год</span><strong id="totalGrossAnnual">—</strong><small>оклад + питание</small></div>
-          <div class="result-card main"><span>Общий net в год</span><strong id="totalNetAnnual">—</strong><small>оклад + питание</small></div>
+          <div class="result-card main highlight"><span>Общий net в год</span><strong id="totalNetAnnual">—</strong><small>оклад + питание</small></div>
           <div class="result-card"><span>Средний общий net в месяц</span><strong id="totalNetMonthly">—</strong><small>net + питание</small></div>
           <div class="result-card"><span>Доп. отпуск</span><strong id="vacation">—</strong><small id="territory">тип территории</small></div>
         </div>
@@ -261,7 +331,7 @@
             <button class="active" type="button" data-tab="salary">Зарплата</button>
             <button type="button" data-tab="food">Питание</button>
             <button type="button" data-tab="bonus">Бонус</button>
-            <button type="button" data-tab="logic">Логика</button>
+            <button type="button" data-tab="logic">Логика расчета</button>
           </div>
 
           <div id="tab-salary" class="tab-content active">
@@ -295,7 +365,7 @@
       </section>
     </section>
 
-    <p class="footer-note">Расчет предварительный. НДФЛ с бонуса указан по ставке 13%, без учета годовой прогрессивной шкалы — как в исходном Excel.</p>
+    <p class="footer-note">Расчет предварительный. НДФЛ с бонуса указан по ставке 13%, без учета годовой прогрессивной шкалы.<br>Разработчик: Алла.</p>
   </main>
 
   <script>
@@ -365,6 +435,10 @@
     }
     function money(value) { return Number.isFinite(value) ? Math.round(value).toLocaleString("ru-RU") + " ₽" : "—"; }
     function pct(value) { return Number.isFinite(value) ? Math.round(value * 100) + "%" : "—"; }
+    function taxBadge(rate) {
+      const cls = rate > 0.15 ? 'danger' : rate > 0.13 ? 'warn' : '';
+      return `<span class="tax-badge ${cls}">${pct(rate)}</span>`;
+    }
     function taxFromGross(cumGross) {
       if (cumGross <= 2400000) return cumGross * .13;
       if (cumGross <= 5000000) return 2400000 * .13 + (cumGross - 2400000) * .15;
@@ -445,12 +519,12 @@
       if (currentMode === "gross") {
         $("salaryTableTitle").textContent = "По месяцам gross";
         $("salaryHead").innerHTML = `<tr><th>Месяц</th><th>Gross</th><th>Накопленный gross</th><th>НДФЛ накопленный</th><th>НДФЛ за месяц</th><th>Ставка за месяц</th><th>Net</th></tr>`;
-        $("salaryRows").innerHTML = rows.map(r => `<tr><td>${r.month}</td><td>${money(r.gross)}</td><td>${money(r.cumGross)}</td><td>${money(r.cumTax)}</td><td>${money(r.tax)}</td><td>${pct(r.rate)}</td><td>${money(r.net)}</td></tr>`).join("");
+        $("salaryRows").innerHTML = rows.map(r => `<tr><td>${r.month}</td><td>${money(r.gross)}</td><td>${money(r.cumGross)}</td><td>${money(r.cumTax)}</td><td>${money(r.tax)}</td><td>${taxBadge(r.rate)}</td><td>${money(r.net)}</td></tr>`).join("");
         $("salaryFoot").innerHTML = `<tr><td>Итого</td><td>${money(sum(rows,"gross"))}</td><td>—</td><td>—</td><td>${money(sum(rows,"tax"))}</td><td>—</td><td>${money(sum(rows,"net"))}</td></tr>`;
       } else {
         $("salaryTableTitle").textContent = "По месяцам net";
         $("salaryHead").innerHTML = `<tr><th>Месяц</th><th>Целевой net</th><th>Накопленный net</th><th>Накопленный gross</th><th>Gross за месяц</th><th>НДФЛ накопленный</th><th>НДФЛ за месяц</th><th>Ставка за месяц</th></tr>`;
-        $("salaryRows").innerHTML = rows.map(r => `<tr><td>${r.month}</td><td>${money(r.netTarget)}</td><td>${money(r.cumNet)}</td><td>${money(r.cumGross)}</td><td>${money(r.gross)}</td><td>${money(r.cumTax)}</td><td>${money(r.tax)}</td><td>${pct(r.rate)}</td></tr>`).join("");
+        $("salaryRows").innerHTML = rows.map(r => `<tr><td>${r.month}</td><td>${money(r.netTarget)}</td><td>${money(r.cumNet)}</td><td>${money(r.cumGross)}</td><td>${money(r.gross)}</td><td>${money(r.cumTax)}</td><td>${money(r.tax)}</td><td>${taxBadge(r.rate)}</td></tr>`).join("");
         $("salaryFoot").innerHTML = `<tr><td>Итого</td><td>${money(sum(rows,"netTarget"))}</td><td>—</td><td>${money(rows[rows.length-1].cumGross)}</td><td>${money(sum(rows,"gross"))}</td><td>—</td><td>${money(sum(rows,"tax"))}</td><td>—</td></tr>`;
       }
     }
@@ -471,7 +545,7 @@
         <tr><td>Месяц выхода</td><td>${els.startMonth.value}</td></tr>
         <tr><td>Календарные дни работы</td><td>${bonus.days}</td></tr>
         <tr><td>Базовый бонус без IF, TF</td><td>${money(bonus.base)}</td></tr>
-        <tr><td>Итоговый бонус gross</td><td>${money(bonus.gross)}</td></tr>
+        <tr><td>Бонус gross с учетом IF и TF</td><td>${money(bonus.gross)}</td></tr>
         <tr><td>НДФЛ с бонуса</td><td>${money(bonus.tax)}</td></tr>
         <tr><td>Бонус net</td><td>${money(bonus.net)}</td></tr>`;
     }
@@ -543,6 +617,24 @@
       calculate();
     });
     els.salary.addEventListener('blur', () => formatSalaryInput(els.salary));
+
+    document.getElementById('resetDefaults').addEventListener('click', () => {
+      currentMode = 'gross';
+      document.querySelectorAll('.mode-switch button').forEach(b => b.classList.remove('active'));
+      document.querySelector('.mode-switch button[data-mode="gross"]').classList.add('active');
+      els.salaryLabel.textContent = 'Сумма gross';
+      els.salary.value = '100 000';
+      els.applyCoeff.value = 'Нет';
+      els.macro.value = '–';
+      fillCities();
+      els.foodCity.value = 'Москва';
+      els.workDays.value = '21';
+      els.bonusPct.value = '8';
+      els.ifPct.value = '120';
+      els.tfPct.value = '140';
+      els.startMonth.value = 'Январь';
+      calculate();
+    });
 
     [els.applyCoeff, els.foodCity, els.workDays, els.bonusPct, els.ifPct, els.tfPct, els.startMonth].forEach(el => {
       el.addEventListener('input', calculate);
