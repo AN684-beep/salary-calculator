@@ -220,18 +220,18 @@
         <div class="form-row">
           <div class="field">
             <label for="bonusPct"><span>Бонус</span><small>%</small></label>
-            <input id="bonusPct" type="number" min="0" step="0.01" value="0.08" />
+            <input id="bonusPct" type="number" min="0" step="1" value="8" />
           </div>
           <div class="field">
             <label for="ifPct"><span>IF</span><small>%</small></label>
-            <input id="ifPct" type="number" min="0" step="0.01" value="1.2" />
+            <input id="ifPct" type="number" min="0" step="1" value="120" />
           </div>
         </div>
 
         <div class="form-row">
           <div class="field">
             <label for="tfPct"><span>TF</span><small>%</small></label>
-            <input id="tfPct" type="number" min="0" step="0.01" value="1.1" />
+            <input id="tfPct" type="number" min="0" step="1" value="110" />
           </div>
           <div class="field">
             <label for="startMonth"><span>Месяц выхода</span><small>для бонуса</small></label>
@@ -455,9 +455,9 @@
       $("bonusRows").innerHTML = `
         <tr><th>Показатель</th><th>Значение</th></tr>
         <tr><td>Годовой оклад</td><td>${money(grossAnnual)}</td></tr>
-        <tr><td>Целевой бонус %</td><td>${pct(n(els.bonusPct))}</td></tr>
-        <tr><td>IF</td><td>${n(els.ifPct).toLocaleString("ru-RU")}</td></tr>
-        <tr><td>TF</td><td>${n(els.tfPct).toLocaleString("ru-RU")}</td></tr>
+        <tr><td>Целевой бонус %</td><td>${pct(bonus.bonusRate)}</td></tr>
+        <tr><td>IF</td><td>${pct(bonus.ifRate)}</td></tr>
+        <tr><td>TF</td><td>${pct(bonus.tfRate)}</td></tr>
         <tr><td>Месяц выхода</td><td>${els.startMonth.value}</td></tr>
         <tr><td>Календарные дни работы</td><td>${bonus.days}</td></tr>
         <tr><td>Базовый бонус без IF, TF</td><td>${money(bonus.base)}</td></tr>
@@ -479,8 +479,11 @@
       const foodGrossAnnual = food.avgGross * 12;
       const foodNetAnnual = food.avgNet * 12;
       const days = BONUS_DAYS[els.startMonth.value];
-      const bonusBase = grossAnnual * n(els.bonusPct) * (days / 365);
-      const bonusGross = grossAnnual * n(els.bonusPct) * n(els.ifPct) * n(els.tfPct) * (days / 365);
+      const bonusRate = n(els.bonusPct) / 100;
+      const ifRate = n(els.ifPct) / 100;
+      const tfRate = n(els.tfPct) / 100;
+      const bonusBase = grossAnnual * bonusRate * (days / 365);
+      const bonusGross = grossAnnual * bonusRate * ifRate * tfRate * (days / 365);
       const bonusTax = bonusGross * .13;
       const bonusNet = bonusGross - bonusTax;
       $("netMonthly").textContent = money(netMonthly);
@@ -501,7 +504,7 @@
       els.foodDayHint.textContent = `${els.foodCity.value}: ${money(food.day)} за рабочий день`;
       renderSalaryTable(rows);
       renderFood(food);
-      renderBonus(grossAnnual, {days, base: bonusBase, gross: bonusGross, tax: bonusTax, net: bonusNet});
+      renderBonus(grossAnnual, {days, base: bonusBase, gross: bonusGross, tax: bonusTax, net: bonusNet, bonusRate, ifRate, tfRate});
     }
     document.querySelectorAll(".mode-switch button").forEach(button => {
       button.addEventListener("click", () => {
