@@ -373,7 +373,7 @@
     function fillInitialSelects() {
       const macros = [...new Set(CITIES.map(c => c.macro))];
       els.macro.innerHTML = macros.map(m => `<option>${m}</option>`).join("");
-      els.macro.value = "Урал";
+      els.macro.value = "–";
       MONTHS.forEach(m => els.startMonth.insertAdjacentHTML("beforeend", `<option>${m}</option>`));
       fillCities("ХМАО");
     }
