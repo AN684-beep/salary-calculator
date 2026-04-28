@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Калькулятор зарплаты</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f6fa;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 360px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    h2 { margin-bottom: 20px; }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Калькулятор ЗП</h2>
+
+  <label>Режим</label>
+  <select id="mode">
+    <option value="gross">Gross → Net</option>
+    <option value="net">Net → Gross</option>
+  </select>
+
+  <label>Зарплата</label>
+  <input type="number" id="salary" placeholder="Введите сумму">
+
+  <label>Питание (в мес)</label>
+  <input type="number" id="food" value="0">
+
+  <div class="result" id="result">Результат: —</div>
+</div>
+
+<script>
+function calculate() {
+  let mode = document.getElementById("mode").value;
+  let salary = Number(document.getElementById("salary").value);
+  let food = Number(document.getElementById("food").value);
+
+  let tax = salary > 5000000 ? 0.15 : 0.13;
+
+  let result;
+
+  if (mode === "gross") {
+    result = salary * (1 - tax) + food;
+  } else {
+    result = salary / (1 - tax) + food;
+  }
+
+  document.getElementById("result").innerText =
+    "Результат: " + Math.round(result).toLocaleString() + " ₽";
+}
+
+document.querySelectorAll("input, select").forEach(el => {
+  el.addEventListener("input", calculate);
+});
+</script>
+
+</body>
+</html>
