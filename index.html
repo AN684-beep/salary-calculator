@@ -352,7 +352,13 @@
     const els = {
       salary: $("salary"), applyCoeff: $("applyCoeff"), macro: $("macro"), city: $("city"), rk: $("rk"), sn: $("sn"), foodCity: $("foodCity"), workDays: $("workDays"), bonusPct: $("bonusPct"), ifPct: $("ifPct"), tfPct: $("tfPct"), startMonth: $("startMonth"), salaryLabel: $("salaryLabel"), cityHint: $("cityHint"), foodDayHint: $("foodDayHint")
     };
-    function n(input) { return Number(input.value) || 0; }
+    function formatNumberInput(el) {
+      let v = el.value.replace(/\s+/g,'');
+      if (!v) { el.value=''; return; }
+      v = v.replace(/[^0-9]/g,'');
+      el.value = Number(v).toLocaleString('ru-RU');
+    }
+    function n(input) { return Number((input.value||'').toString().replace(/\s+/g,'')) || 0; }
     function money(value) { return Number.isFinite(value) ? Math.round(value).toLocaleString("ru-RU") + " ₽" : "—"; }
     function pct(value) { return Number.isFinite(value) ? Math.round(value * 100) + "%" : "—"; }
     function taxFromGross(cumGross) {
@@ -525,11 +531,17 @@
       });
     });
     fillInitialSelects();
+    [els.salary, els.workDays, els.bonusPct, els.ifPct, els.tfPct].forEach(el => formatNumberInput(el));
     els.macro.addEventListener("change", () => { fillCities(); calculate(); });
     els.city.addEventListener("change", calculate);
     [els.salary, els.applyCoeff, els.foodCity, els.workDays, els.bonusPct, els.ifPct, els.tfPct, els.startMonth].forEach(el => {
-      el.addEventListener("input", calculate);
-      el.addEventListener("change", calculate);
+      if (el.tagName === 'INPUT') {
+        el.addEventListener('input', () => { formatNumberInput(el); calculate(); });
+        el.addEventListener('blur', () => { formatNumberInput(el); });
+      } else {
+        el.addEventListener('input', calculate);
+      }
+      el.addEventListener('change', calculate);
     });
     calculate();
   </script>
