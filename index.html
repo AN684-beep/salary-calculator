@@ -109,6 +109,14 @@
     }
     input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(255, 106, 19, 0.12); }
     .hint { margin-top: 8px; color: var(--muted); font-size: 12px; }
+    .coeff-hint {
+      margin-top: -7px;
+      margin-bottom: 18px;
+      padding: 9px 12px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .dashboard {
       display: grid;
@@ -322,7 +330,7 @@
             <input id="sn" disabled />
           </div>
         </div>
-        <div class="hint" id="coeffHint">Итоговая надбавка РК + СН: 0%</div>
+        <div class="hint coeff-hint" id="coeffHint">Итоговая надбавка РК + СН: 0%</div>
 
         <div class="field">
           <label for="foodCity"><span>Питание</span><small>город</small></label>
@@ -378,7 +386,7 @@
           <div class="result-card blue"><span>Питание gross в месяц</span><strong id="foodGrossMonthly">—</strong><small id="foodGrossHint">по выбранному городу</small></div>
           <div class="result-card blue"><span>Питание net в месяц</span><strong id="foodNetMonthly">—</strong><small>после 13% НДФЛ</small></div>
           <div class="result-card green"><span>Бонус gross</span><strong id="bonusGross">—</strong><small>годовая сумма</small></div>
-          <div class="result-card green highlight"><span>Бонус net</span><strong id="bonusNet">—</strong><small>НДФЛ 13%</small></div>
+          <div class="result-card green"><span>Бонус net</span><strong id="bonusNet">—</strong><small>НДФЛ 13%</small></div>
           <div class="result-card"><span>Общий gross в год</span><strong id="totalGrossAnnual">—</strong><small>оклад + питание</small></div>
           <div class="result-card main highlight"><span>Общий net в год</span><strong id="totalNetAnnual">—</strong><small>оклад + питание</small></div>
           <div class="result-card"><span>Средний общий net в месяц</span><strong id="totalNetMonthly">—</strong><small>net + питание</small></div>
