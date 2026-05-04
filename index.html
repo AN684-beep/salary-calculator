@@ -389,8 +389,8 @@
           <div class="result-card green"><span>Бонус net</span><strong id="bonusNet">—</strong><small>НДФЛ 13%</small></div>
           <div class="result-card"><span>Общий gross в год</span><strong id="totalGrossAnnual">—</strong><small>оклад + питание</small></div>
           <div class="result-card main highlight"><span>Общий net в год</span><strong id="totalNetAnnual">—</strong><small>оклад + питание</small></div>
-          <div class="result-card"><span>Средний общий net в месяц</span><strong id="totalNetMonthly">—</strong><small>net + питание</small></div>
-          <div class="result-card"><span>Доп. отпуск</span><strong id="vacation">—</strong><small id="territory">тип территории</small></div>
+          <div class="result-card"><span>Годовой gross</span><strong id="annualGrossWithBonus">—</strong><small>оклад + питание + бонус</small></div>
+          <div class="result-card"><span>Годовой net</span><strong id="annualNetWithBonus">—</strong><small>оклад + питание + бонус</small></div>
         </div>
 
         <div class="content-panel">
@@ -616,7 +616,7 @@
         <tr><td>Базовый бонус без IF, TF</td><td>${money(bonus.base)}</td></tr>
         <tr><td>Бонус gross с учетом IF и TF</td><td>${money(bonus.gross)}</td></tr>
         <tr><td>НДФЛ с бонуса</td><td>${money(bonus.tax)}</td></tr>
-        <tr><td>Бонус net</td><td>${money(bonus.net)}</td></tr>`;
+        <tr><td>Бонус net с учетом IF и TF</td><td>${money(bonus.net)}</td></tr>`;
     }
     function calculate() {
       updateCityInfo();
@@ -652,9 +652,8 @@
       $("bonusNet").textContent = money(bonusNet);
       $("totalGrossAnnual").textContent = money(grossAnnual + foodGrossAnnual);
       $("totalNetAnnual").textContent = money(netAnnual + foodNetAnnual);
-      $("totalNetMonthly").textContent = money(netMonthly + food.avgNet);
-      $("vacation").textContent = String(c.vacation);
-      $("territory").textContent = `тип: ${c.type}; праздники: ${c.holidays}`;
+      $("annualGrossWithBonus").textContent = money(grossAnnual + foodGrossAnnual + bonusGross);
+      $("annualNetWithBonus").textContent = money(netAnnual + foodNetAnnual + bonusNet);
       els.foodDayHint.textContent = els.foodCity.value === "–"
         ? "Питание не учитывается в расчете."
         : `${els.foodCity.value}: ${money(food.day)} gross за рабочий день`;
