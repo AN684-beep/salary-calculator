@@ -141,10 +141,21 @@
       min-width: 0;
       overflow: hidden;
     }
-    .result-card.main { background: linear-gradient(135deg, var(--primary), #ff934f); color: white; border: 0; }
+    .result-card.main {
+      background: linear-gradient(135deg, rgba(255,106,19,0.85), rgba(255,147,79,0.85));
+      color: #ffffff;
+      border: 0;
+    }
     .result-card.blue { background: var(--soft-blue); }
     .result-card.orange { background: var(--soft); }
-    .result-card.green { background: var(--soft-green); }
+    .result-card.green {
+      background: #e6f7ef;
+      color: #0b6b4b;
+    }
+    .result-card.green span,
+    .result-card.green small {
+      color: #2f7d63;
+    }
     .result-card.highlight {
       border: 2px solid rgba(255, 106, 19, 0.35);
       box-shadow: 0 14px 30px rgba(255, 106, 19, 0.14);
