@@ -334,8 +334,8 @@
 
         <div class="field">
           <label for="foodCity"><span>Питание</span><small>город</small></label>
-          <select id="foodCity"><option selected>Москва</option><option>Регионы</option></select>
-          <div class="hint" id="foodDayHint">Москва — 300 ₽ gross за рабочий день, регионы — 240 ₽ gross за рабочий день.</div>
+          <select id="foodCity"><option>–</option><option selected>Москва</option><option>Регионы</option></select>
+          <div class="hint" id="foodDayHint">Москва — 300 ₽ gross за рабочий день, регионы — 240 ₽ gross за рабочий день, «–» — без питания.</div>
         </div>
 
         <div class="field">
@@ -409,7 +409,7 @@
 
           <div id="tab-food" class="tab-content">
             <h2 class="section-title">Питание</h2>
-            <p class="section-subtitle">Москва — 300 ₽ gross за рабочий день, регионы — 240 ₽ gross. НДФЛ по питанию — 13%.</p>
+            <p class="section-subtitle">Москва — 300 ₽ gross за рабочий день, регионы — 240 ₽ gross. Если выбрано «–», питание не учитывается в итоговых карточках. НДФЛ по питанию — 13%.</p>
             <div class="table-wrap"><table><thead><tr><th>Месяц</th><th>Рабочие дни</th><th>Доплата за день</th><th>Питание gross</th><th>НДФЛ</th><th>Питание net</th></tr></thead><tbody id="foodRows"></tbody><tfoot><tr><td>Итого</td><td id="foodDaysSum">—</td><td>—</td><td id="foodGrossSum">—</td><td id="foodTaxSum">—</td><td id="foodNetSum">—</td></tr></tfoot></table></div>
           </div>
 
@@ -572,7 +572,7 @@
       });
     }
     function foodCalc() {
-      const day = els.foodCity.value === "Москва" ? 300 : 240;
+      const day = els.foodCity.value === "Москва" ? 300 : els.foodCity.value === "Регионы" ? 240 : 0;
       const avgGross = day * n(els.workDays);
       const avgNet = avgGross * .87;
       const rows = MONTHS.map((month, i) => {
@@ -655,7 +655,9 @@
       $("totalNetMonthly").textContent = money(netMonthly + food.avgNet);
       $("vacation").textContent = String(c.vacation);
       $("territory").textContent = `тип: ${c.type}; праздники: ${c.holidays}`;
-      els.foodDayHint.textContent = `${els.foodCity.value}: ${money(food.day)} gross за рабочий день`;
+      els.foodDayHint.textContent = els.foodCity.value === "–"
+        ? "Питание не учитывается в расчете."
+        : `${els.foodCity.value}: ${money(food.day)} gross за рабочий день`;
       renderSalaryTable(rows);
       renderFood(food);
       renderBonus(grossAnnual, {days, base: bonusBase, gross: bonusGross, tax: bonusTax, net: bonusNet, bonusRate, ifRate, tfRate});
